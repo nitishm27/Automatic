@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import ats.atsapi as ats
 
 class NPT:
-    samples_per_sec = None
+    samples_per_sec = 1000000000.0
     # No pre-trigger samples in NPT mode
     pre_trigger_samples = 0
     # TODO: Select the number of samples per record.
@@ -42,12 +42,11 @@ class NPT:
         #  - or select clock source FAST_EXTERNAL_CLOCK, sample rate
         #    SAMPLE_RATE_USER_DEF, and connect a 100MHz signal to the
         #    EXT CLK BNC connector
-        global samples_per_sec
-        samples_per_sec = 1000000000.0
-        self.board.setCaptureClock(ats.INTERNAL_CLOCK,
-                              ats.SAMPLE_RATE_1000MSPS,
+        # global samples_per_sec
+        self.board.setCaptureClock(ats.EXTERNAL_CLOCK_10MHz_REF,
+                              1000000000,
                               ats.CLOCK_EDGE_RISING,
-                              0)
+                              1)
 
         # TODO: Select channel A input parameters as required.
         self.board.inputControl(ats.CHANNEL_A,
@@ -85,7 +84,7 @@ class NPT:
 
         # TODO: Set trigger delay as required.
         triggerDelay_sec = 0
-        triggerDelay_samples = int(triggerDelay_sec * samples_per_sec + 0.5)
+        triggerDelay_samples = int(triggerDelay_sec * self.samples_per_sec + 0.5)
         self.board.setTriggerDelay(triggerDelay_samples)
 
         # TODO: Set trigger timeout as required.

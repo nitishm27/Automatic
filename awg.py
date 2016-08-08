@@ -1,6 +1,11 @@
 import numpy as np
 import struct
 import binascii
+from enum import Enum
+
+class Runmode(Enum):
+    sequence = 1
+    continuous = 2
 
 def add_waveform(waveform, name, inst, marker1=None, marker2=None):
     inst.write("WLISt:WAVeform:DELETE " + repr(name))
@@ -31,6 +36,9 @@ def add_to_sequence(channel, name, position, inst):
         inst.write("SEQuence:LENGth " + str(position))
     inst.write("SEQuence:ELEMent" + str(position) + ":WAVeform" + str(channel) + " " + repr(name))
 
+def add_to_continuous(channel, name, inst):
+    inst.write("SOURCE" + str(channel) + ":WAVEFORM" + " "  + repr(name) )
+
 def set_repeat(position, repeat, inst):
     inst.write('SEQUENCE:ELEMENT' + str(position) + ':LOOP:COUNT ' + str(repeat))
 
@@ -39,10 +47,25 @@ def set_goto(position, goto, inst):
     inst.write('SEQuence:ELEMent' + str(position) + ':GOTO:INDex ' + str(goto))
 
 def start(inst):
-    inst.write("AWGCONTROL:RMODE SEQuence")
     inst.write("OUTPUT1:STATE ON")
     inst.write("OUTPUT2:STATE ON")
     inst.write("AWGCONTROL:RUN")
+
+def set_mode(mode, inst):
+    if mode == Runmode.sequence:
+        inst.write("AWGCONTROL:RMODE SEQuence")
+    elif mode == Runmode.continuous:
+        inst.write("AWGCONTROL:RMODE CONTINUOUS")
+
+def set_ref_clock(bool, inst):
+    if (bool):
+        inst.write('SOURCE1:ROSCILLATOR:SOURCE EXTERNAL')
+    else:
+        inst.write('SOURCE1:ROSCILLATOR:SOURCE INTERNAL')
+
+#sets in MHz
+def set_ref_freq(freq, inst):
+    inst.write("SOURCE1:ROSCILLATOR:FREQUENCY " + str(freq) +"MHZ")
 
 def stop(inst):
     inst.write("AWGCONTROL:STOP")

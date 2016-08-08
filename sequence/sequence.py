@@ -1,7 +1,7 @@
 import sequence.functions
 import awg
 import dbm.db
-
+import numpy as np
 def set_goto_sequence(index, inst):
     index = index - 1
     for i in range(index):
@@ -9,6 +9,48 @@ def set_goto_sequence(index, inst):
             awg.set_goto(i + 1, 1, inst)
         else:
             awg.set_goto(i + 1, i + 2, inst)
+
+class One_Tone:
+    id = -1
+
+    def __init__(self, inst):
+        self.inst = inst
+
+    def load_from_db(self, id):
+        self.id = id
+        cnx = dbm.db.open_readonly_connection()
+        cursor = cnx.cursor()
+        dict = dbm.db.get_row(cursor, "1_tone_power_pulse", str(id))
+
+        self.clock = float(dict["clock"])
+
+        def parse(value):
+            return int(float(dict[value]) / self.clock)
+
+        self.samples = int(dict["samples"])
+        self.qubit_peak = parse("qubit_pulse_peak")
+        self.qubit_width = parse("qubit_pulse_width")
+        self.cavity_width = parse("cavity_pulse_width")
+        self.cavity_start = parse("cavity_pulse_start")
+        self.marker_width = parse("marker_width")
+        self.delay_const1 = parse("delay_const_1")
+        self.delay_const2 = parse("delay_const_2")
+        self.qubit_on = bool(dict["qubit_on"])
+
+    def load_waveform(self):
+        if(self.qubit_on):
+            gaussian, gaussian_empty = sequence.functions.gen_gaussian(self.qubit_width)
+            channel1 = np.zeros(self.samples)
+            channel1[(self.qubit_peak - 2 * self.qubit_width): (self.qubit_peak + 2 * self.qubit_width)] = gaussian
+            awg.add_waveform(channel1, "1_tone_qubit", self.inst)
+            awg.add_to_continuous(1, "1_tone_qubit", self.inst)
+        cavity, marker, cavity_empty = sequence.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
+        channel2 = np.zeros(self.samples)
+        channel2[(self.cavity_start): (self.cavity_start + self.cavity_width)] = cavity
+        channel2_marker = np.zeros(len(channel1))
+        channel2_marker[(self.cavity_start): (self.cavity_start + self.cavity_width)] = marker
+        awg.add_waveform(channel2, "1_tone_cavity", self.inst, marker1=channel2_marker)
+        awg.add_to_continuous(2, "1_tone_cavity", self.inst)
 
 class T1_Sequence:
     id = -1
