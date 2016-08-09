@@ -15,12 +15,14 @@ class Sequence_Type(Enum):
     ramsey = 3
 
 class Sequence_2Channel:
-    def __init__(self, type):
+    def __init__(self, type, awg_inst):
         self.type = type
         rm = visa.ResourceManager()
-        self.awg_inst = rm.open_resource(config.awg_ip)
+        self.awg_inst = awg_inst
         if type == Sequence_Type.t1:
             self.pulse = sequence.sequence.T1_Sequence(self.awg_inst)
+        elif type == Sequence_Type.rabi:
+            self.pulse = sequence.sequence.Rabi_Sequence(self.awg_inst)
         self.npt = NPT(atsapi.Board(systemId=1, boardId=1))
 
     def load_from_db(self, id):
@@ -30,6 +32,9 @@ class Sequence_2Channel:
         if self.type == Sequence_Type.t1:
             dict = dbm.db.get_row(cursor, "t1", str(id))
             pulse_dict = dbm.db.get_row(cursor, "t1_pulse", dict["pulse_id"])
+        elif self.type == Sequence_Type.rabi:
+            dict = dbm.db.get_row(cursor, "rabi", str(id))
+            pulse_dict = dbm.db.get_row(cursor, "rabi_pulse", dict["pulse_id"])
         self.pulse.load_from_db(dict["pulse_id"])
         self.npt.post_trigger_samples = int(dict["samples_per_record"])
         self.npt.buffers_per_acquisition = int(dict["buffers_per_acquisition"])
@@ -42,9 +47,7 @@ class Sequence_2Channel:
     def acquire(self):
         awg.set_mode(awg.Runmode.sequence, self.awg_inst)
         ch1, ch2 = acquisition.util.average_buffers(self.awg_inst, self.npt)
-        plt.plot(ch1)
-        plt.show()
-        acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
+        return acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
 
     def close(self):
         self.awg_inst.close()

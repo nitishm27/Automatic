@@ -14,7 +14,7 @@ def average_buffers(awg_inst, npt):
         test_proc(avgd_buffer, buffer)
 
     def run_acquisition():
-        npt.acquire_data(avg, verbose=True)
+        npt.acquire_data(avg)
 
     thread = threading.Thread(target=run_acquisition, args=())
     thread.start()
@@ -34,8 +34,7 @@ def iq_demod_subtract(ch1, ch2, npt, if_freq):
     x = ch1_i*ch2_i + ch1_q*ch2_q
     y = ch1_i*ch2_q - ch1_q*ch2_i
     phase = np.arctan2(y, x)
-    plt.plot(phase)
-    plt.show()
+    return phase
 
 def iq_demod(data, npt, if_freq):
     period_length = int(npt.samples_per_sec / if_freq)

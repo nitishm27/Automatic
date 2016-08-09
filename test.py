@@ -1,21 +1,20 @@
 import acquisition.sequence_2channel as sq
 import acquisition.onetone_2channel as con
-# t1_sequence = sq.Sequence_2Channel(sq.Sequence_Type.t1)
-# t1_sequence.load_from_db(3)
-# t1_sequence.npt.buffers_per_acquisition = 1000
-# t1_sequence.start()
-# t1_sequence.acquire()
-# t1_sequence.close()
+import sequence.sequence
+import config
+import visa
+import matplotlib.pyplot as plt
 
-one_tone = con.Onetone_2channel()
-one_tone.load_from_db(5)
-one_tone.npt.buffers_per_acquisition = 1000
-one_tone.start()
-one_tone.acquire()
-one_tone.close()
-
-
-
+rm = visa.ResourceManager()
+inst = rm.open_resource(config.awg_ip)
+rabi_sequence = sq.Sequence_2Channel(sq.Sequence_Type.rabi, inst)
+rabi_sequence.load_from_db(2)
+rabi_sequence.npt.buffers_per_acquisition = 1000
+rabi_sequence.start()
+sq = rabi_sequence.acquire()
+rabi_sequence.close()
+plt.plot(sq)
+plt.show()
 
 
 
