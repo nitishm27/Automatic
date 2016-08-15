@@ -45,7 +45,7 @@ class Onetone_2channel:
         self.pulse.load_from_db(dict["pulse_id"])
         self.npt.post_trigger_samples = int(dict["samples_per_record"])
         self.npt.records_per_buffer = int(dict["records_per_buffer"])
-        self.npt.buffers_per_acquisition = int(dict["records_count"])/self.npt.records_per_buffer
+        self.npt.buffers_per_acquisition = int(float(dict["records_count"])/self.npt.records_per_buffer)
         self.if_freq = float(dict["if_freq"])
 
     def start(self):
@@ -54,8 +54,6 @@ class Onetone_2channel:
     def acquire(self):
         awg.set_mode(awg.Runmode.continuous, self.awg_inst)
         ch1, ch2 = acquisition.util.average_buffers(self.awg_inst, self.npt)
-        plt.plot(ch1)
-        plt.show()
         phase = acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
         return np.mean(phase)
 
