@@ -2,6 +2,7 @@ import numpy as np
 import struct
 import binascii
 from enum import Enum
+import ctypes
 
 class Runmode(Enum):
     sequence = 1
@@ -71,7 +72,6 @@ def stop(inst):
     inst.write("AWGCONTROL:STOP")
 
 def float_to_bitstring(f):
-    binary = int(bin(struct.unpack('!i',struct.pack('!f',f))[0]), 2)
-    if binary == 0:
-        return b'\x00\x00\x00\x00'
-    return binascii.unhexlify('%x' % binary)[::-1]
+    float_pointer = ctypes.pointer(ctypes.c_float(f))
+    char_pointer = ctypes.cast(float_pointer, ctypes.POINTER(ctypes.c_char * 4))
+    return b''.join([byte for byte in char_pointer.contents])

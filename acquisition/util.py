@@ -26,6 +26,10 @@ def average_buffers(awg_inst, npt):
     awg.stop(awg_inst)
     ch1 = avgd_buffer[0:int(len(avgd_buffer)/2)] / npt.buffers_per_acquisition
     ch2 = avgd_buffer[int(len(avgd_buffer)/2):len(avgd_buffer)] / npt.buffers_per_acquisition
+    plt.plot(ch1)
+    plt.show()
+    plt.plot(ch2)
+    plt.show()
     return ch1, ch2
 
 def iq_demod_subtract(ch1, ch2, npt, if_freq):

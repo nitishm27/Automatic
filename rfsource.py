@@ -1,4 +1,3 @@
-
 class SGMA:
     def __init__(self, inst):
         self.inst = inst
@@ -15,8 +14,19 @@ class SGMA:
         else:
             self.inst.write(':SOURce:IQ:STATe OFF')
 
+    def set_ext_clock(self, bool):
+        if bool:
+            self.inst.write(':SOURce:ROSCillator:EXTernal:FREQuency 10MHz')
+            self.inst.write(':SOURce:ROSCillator:OUTput:FREQuency 10MHZ')
+            self.inst.write(':SOURce:ROSCillator:SOURce EXT')
+        else:
+            self.inst.write(':SOURce:ROSCillator:SOURce INT')
+
     def set_freq(self, freq): #input frequency in GHz
         self.inst.write(':SOURce:FREQuency:CW ' + str(freq) + ' GHz')
+
+    def get_freq(self):
+        return self.inst.query(':SOURce:FREQuency:CW?')
 
     def set_power(self, power): #input power in dBm
         self.inst.write(':SOURce:POWer  ' + str(power) + 'dBm')
