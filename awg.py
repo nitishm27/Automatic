@@ -14,12 +14,12 @@ def add_waveform(waveform, name, inst, marker1=None, marker2=None):
     inst.values_format.use_binary('f', False, np.array)
     bytes = [None] * len(waveform)
     for i, f in enumerate(waveform):
-        marker_byte = 32
+        marker_byte = 0
         if np.any(marker1) and marker1[i] != 0:
             marker_byte = marker_byte + 64
         if np.any(marker2) and marker2[i] != 0:
             marker_byte = marker_byte + 128
-        marker_str = binascii.unhexlify('%x' % marker_byte)
+        marker_str = chr(marker_byte).encode()
         bytes[i] = float_to_bitstring(f) + marker_str
     byte_str = b''.join([byte for byte in bytes])
     num_bytes = len(waveform) * 5

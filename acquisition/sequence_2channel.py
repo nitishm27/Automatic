@@ -2,11 +2,10 @@ from enum import Enum
 import awg
 from ats.ATS9870_NPT import NPT
 import ats.atsapi as atsapi
-import sequence.sequence
+import pulse.pulse
 import dbm.db
 import visa
-import config
-import matplotlib.pyplot as plt
+import numpy as np
 import acquisition.util
 
 class Sequence_Type(Enum):
@@ -20,9 +19,9 @@ class Sequence_2Channel:
         rm = visa.ResourceManager()
         self.awg_inst = awg_inst
         if type == Sequence_Type.t1:
-            self.pulse = sequence.sequence.T1_Sequence(self.awg_inst)
+            self.pulse = pulse.pulse.T1_Sequence(self.awg_inst)
         elif type == Sequence_Type.rabi:
-            self.pulse = sequence.sequence.Rabi_Sequence(self.awg_inst)
+            self.pulse = pulse.pulse.Rabi_Sequence(self.awg_inst)
         self.npt = NPT(atsapi.Board(systemId=1, boardId=1))
 
     def load_from_db(self, id):
@@ -47,7 +46,9 @@ class Sequence_2Channel:
     def acquire(self):
         awg.set_mode(awg.Runmode.sequence, self.awg_inst)
         ch1, ch2 = acquisition.util.average_buffers(self.awg_inst, self.npt)
-        return acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
+        mag, phase = acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
+        time = np.linspace(0, self.pulse.t_inc * self.pulse.num_pulses, self.pulse.num_pulses, endpoint=False)
+        return time, mag, phase
 
     def close(self):
         self.awg_inst.close()

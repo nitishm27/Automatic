@@ -26,10 +26,6 @@ def average_buffers(awg_inst, npt):
     awg.stop(awg_inst)
     ch1 = avgd_buffer[0:int(len(avgd_buffer)/2)] / npt.buffers_per_acquisition
     ch2 = avgd_buffer[int(len(avgd_buffer)/2):len(avgd_buffer)] / npt.buffers_per_acquisition
-    plt.plot(ch1)
-    plt.show()
-    plt.plot(ch2)
-    plt.show()
     return ch1, ch2
 
 def iq_demod_subtract(ch1, ch2, npt, if_freq):
@@ -38,7 +34,8 @@ def iq_demod_subtract(ch1, ch2, npt, if_freq):
     x = ch1_i*ch2_i + ch1_q*ch2_q
     y = ch1_i*ch2_q - ch1_q*ch2_i
     phase = np.arctan2(y, x)
-    return phase
+    mag = np.sqrt(ch1_i**2 + ch1_q**2)
+    return mag,phase
 
 def iq_demod(data, npt, if_freq):
     period_length = int(npt.samples_per_sec / if_freq)
@@ -54,8 +51,8 @@ def iq_demod(data, npt, if_freq):
         for j in range(0, iq_per_record):
             start = i * npt.post_trigger_samples + j * period_length
             end = i * npt.post_trigger_samples + (j+1) * period_length
-            avg_i = avg_i + np.sum(sine_samples * data[start:end]) * dt
-            avg_q = avg_q + np.sum(cosine_samples * data[start:end]) * dt
+            avg_i = avg_i + np.sum(sine_samples * data[start:end]) * dt * if_freq
+            avg_q = avg_q + np.sum(cosine_samples * data[start:end]) * dt * if_freq
         avg_i = avg_i / iq_per_record
         avg_q = avg_q / iq_per_record
         i_values[i] = avg_i

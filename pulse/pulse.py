@@ -1,4 +1,4 @@
-import sequence.functions
+import pulse.functions
 import awg
 import dbm.db
 import numpy as np
@@ -11,7 +11,7 @@ def set_goto_sequence(index, inst):
         else:
             awg.set_goto(i + 1, i + 2, inst)
 
-class One_Tone:
+class Continuous:
     id = -1
 
     def __init__(self, inst):
@@ -40,12 +40,12 @@ class One_Tone:
 
     def load_waveform(self):
         if(self.qubit_on):
-            gaussian, gaussian_empty = sequence.functions.gen_gaussian(self.qubit_width)
+            gaussian, gaussian_empty = pulse.functions.gen_gaussian(self.qubit_width)
             channel1 = np.zeros(self.samples)
             channel1[(self.qubit_peak - 2 * self.qubit_width): (self.qubit_peak + 2 * self.qubit_width)] = gaussian
             awg.add_waveform(channel1, "1_tone_qubit", self.inst)
             awg.add_to_continuous(1, "1_tone_qubit", self.inst)
-        cavity, marker, cavity_empty = sequence.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
+        cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
         channel2 = np.zeros(self.samples)
         channel2[(self.cavity_start): (self.cavity_start + self.cavity_width)] = cavity
         channel2_marker = np.zeros(len(channel1))
@@ -81,12 +81,12 @@ class Rabi_Sequence:
         self.t_inc = parse("t_inc")
 
     def load_sequence(self):
-        cavity, marker, cavity_empty = sequence.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
-        qubit_wait = sequence.functions.gen_space(4 * (self.qubit_start_width + (self.num_pulses - 1) * self.t_inc) + self.delay_const1)
+        cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
+        qubit_wait = pulse.functions.gen_space(4 * (self.qubit_start_width + (self.num_pulses - 1) * self.t_inc) + self.delay_const1)
         # print(len(qubit_wait))
-        qubit = sequence.functions.gen_space(len(qubit_wait))
-        start_wait = sequence.functions.gen_space(self.qubit_end_time - len(qubit_wait) + self.delay_const1)
-        end_wait = sequence.functions.gen_space(self.samples - self.qubit_end_time - self.delay_const1 - self.marker_width)
+        qubit = pulse.functions.gen_space(len(qubit_wait))
+        start_wait = pulse.functions.gen_space(self.qubit_end_time - len(qubit_wait) + self.delay_const1)
+        end_wait = pulse.functions.gen_space(self.samples - self.qubit_end_time - self.delay_const1 - self.marker_width)
         awg.add_waveform(cavity, "cavity", self.inst, marker1=marker)
         awg.add_waveform(cavity_empty, "cavity_empty", self.inst)
         awg.add_waveform(start_wait, "start_wait", self.inst)
@@ -111,7 +111,7 @@ class Rabi_Sequence:
         set_goto_sequence(index, self.inst)
 
     def add_qubit(self, arr, width, index):
-        gaussian = sequence.functions.gen_gaussian(width)[0]
+        gaussian = pulse.functions.gen_gaussian(width)[0]
         arr[-1 * (self.delay_const1 + 4 * width):-1 * self.delay_const1] = gaussian
         awg.add_waveform(arr, "qubit_" + str(width), self.inst)
         awg.add_to_sequence(1, "qubit_" + str(width), index, self.inst)
@@ -143,12 +143,12 @@ class T1_Sequence:
         self.t_inc = parse("t_inc")
 
     def load_sequence(self):
-        gaussian, gaussian_empty = sequence.functions.gen_gaussian(self.qubit_width)
-        cavity, marker, cavity_empty = sequence.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
-        t_inc_wait = sequence.functions.gen_space(self.t_inc)
-        start_wait = sequence.functions.gen_space(self.qubit_end_time - 4 * self.qubit_width - self.delay_const1 - self.num_pulses * self.t_inc)
-        end_wait = sequence.functions.gen_space(self.samples - self.cavity_width - self.qubit_end_time)
-        delay1_wait = sequence.functions.gen_space(self.delay_const1)
+        gaussian, gaussian_empty = pulse.functions.gen_gaussian(self.qubit_width)
+        cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
+        t_inc_wait = pulse.functions.gen_space(self.t_inc)
+        start_wait = pulse.functions.gen_space(self.qubit_end_time - 4 * self.qubit_width - self.delay_const1 - self.num_pulses * self.t_inc)
+        end_wait = pulse.functions.gen_space(self.samples - self.cavity_width - self.qubit_end_time)
+        delay1_wait = pulse.functions.gen_space(self.delay_const1)
         awg.add_waveform(gaussian, "qubit", self.inst)
         awg.add_waveform(gaussian_empty, "qubit_empty", self.inst)
         awg.add_waveform(cavity, "cavity", self.inst, marker1=marker)
