@@ -28,7 +28,7 @@ class Sequence_2Channel:
         cnx = dbm.db.open_readonly_connection()
         cursor = cnx.cursor()
         dict = dbm.db.get_row(cursor, "generic_sequence", str(id))
-        self.type = dict["pulse_type"];
+        self.type = dict["pulse_type"]
         if self.type == "t1_pulse":
             self.pulse = pulse.pulse.T1_Sequence(self.awg_inst)
         elif self.type == "rabi_pulse":
