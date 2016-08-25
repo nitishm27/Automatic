@@ -19,8 +19,8 @@ onetone_freq.start()
 start_freq = 10e9
 end_freq = 11.8e9
 steps = 180
-freqs, mag, phase = onetone_freq.acquire(start_freq, end_freq, steps)
-plt.plot(freqs, mag)
+freqs, mag, phase = onetone_freq.acquire(start_freq, end_freq, steps, verbose=True)
+plt.plot(freqs, phase)
 plt.show()
 
 

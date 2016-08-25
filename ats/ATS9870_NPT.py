@@ -72,11 +72,11 @@ class NPT:
                                   ats.TRIG_ENGINE_J,
                                   ats.TRIG_EXTERNAL,
                                   ats.TRIGGER_SLOPE_POSITIVE,
-                                  140,
+                                  132,
                                   ats.TRIG_ENGINE_K,
                                   ats.TRIG_DISABLE,
                                   ats.TRIGGER_SLOPE_POSITIVE,
-                                  140)
+                                  132)
 
         # TODO: Select external trigger parameters as required.
         self.board.setExternalTrigger(ats.DC_COUPLING,
