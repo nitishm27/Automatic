@@ -83,10 +83,9 @@ class Rabi_Sequence:
     def load_sequence(self):
         cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
         qubit_wait = pulse.functions.gen_space(4 * (self.qubit_start_width + (self.num_pulses - 1) * self.t_inc) + self.delay_const1)
-        # print(len(qubit_wait))
         qubit = pulse.functions.gen_space(len(qubit_wait))
         start_wait = pulse.functions.gen_space(self.qubit_end_time - len(qubit_wait) + self.delay_const1)
-        end_wait = pulse.functions.gen_space(self.samples - self.qubit_end_time - self.delay_const1 - self.marker_width)
+        end_wait = pulse.functions.gen_space(self.samples - self.qubit_end_time - self.delay_const1 - self.cavity_width)
         awg.add_waveform(cavity, "cavity", self.inst, marker1=marker)
         awg.add_waveform(cavity_empty, "cavity_empty", self.inst)
         awg.add_waveform(start_wait, "start_wait", self.inst)
