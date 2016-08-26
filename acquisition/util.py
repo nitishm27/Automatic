@@ -35,7 +35,7 @@ def iq_demod_subtract(ch1, ch2, npt, if_freq):
     y = ch1_i*ch2_q - ch1_q*ch2_i
     phase = np.arctan2(y, x)
     mag = np.sqrt(ch1_i**2 + ch1_q**2)
-    return mag,phase
+    return mag,np.unwrap(phase)
 
 def iq_demod(data, npt, if_freq):
     period_length = int(npt.samples_per_sec / if_freq)

@@ -82,11 +82,8 @@ class Onetone_Frequency:
 
 class Onetone_2channel:
     def __init__(self, awg_inst):
-        rm = visa.ResourceManager()
         self.awg_inst = awg_inst
         self.npt = NPT(atsapi.Board(systemId=1, boardId=1))
-        self.rf_cavity = rm.open_resource(config.rfsource_ip)
-        self.rf_lo = rm.open_resource(config.rfsource2_ip)
         self.pulse = pulse.pulse.Continuous(self.awg_inst)
 
     def load_from_db(self, id):
