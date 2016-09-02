@@ -5,13 +5,12 @@ import acquisition.sequence_2channel as sq
 import numpy as np
 
 DIRECTORY="."
-ID = 3
+ID = 7
 
 rm = visa.ResourceManager()
-inst = rm.open_resource(config.awg_ip)
+inst = rm.open_resource(config.awg2_ip)
 sequence = sq.Sequence_2Channel(inst)
 sequence.load_from_db(ID)
-sequence.npt.buffers_per_acquisition = 10
 sequence.start()
 time, mag, phase = sequence.acquire()
 

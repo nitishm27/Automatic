@@ -1,14 +1,13 @@
-import config
-import awg
-import visa
-from ats.ATS9870_NPT import NPT
-import ats.atsapi as atsapi
 import dbm.db
+import numpy as np
+
+import acquisition.util
+import ats.atsapi as atsapi
 import pulse.functions
 import pulse.pulse
-import matplotlib.pyplot as plt
-import acquisition.util
-import numpy as np
+from ats.ATS9870_NPT import NPT
+from instruments import awg
+
 
 class Onetone_Power:
     def __init__(self, awg_inst, lo_source, rf_source):

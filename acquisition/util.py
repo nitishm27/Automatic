@@ -1,8 +1,10 @@
-import numpy as np
 import threading
 import time
-import awg
-import matplotlib.pyplot as plt
+
+import numpy as np
+
+from instruments import awg
+
 
 def average_buffers(awg_inst, npt):
     avgd_buffer = np.zeros(npt.post_trigger_samples * npt.records_per_buffer * 2)

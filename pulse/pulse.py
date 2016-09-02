@@ -1,7 +1,9 @@
-import pulse.functions
-import awg
 import dbm.db
 import numpy as np
+
+import pulse.functions
+from instruments import awg
+
 
 def set_goto_sequence(index, inst):
     index = index - 1

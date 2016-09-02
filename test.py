@@ -1,9 +1,10 @@
+import matplotlib.pyplot as plt
+import visa
+
 import acquisition.onetone_2channel as con
 import config
-import visa
-import matplotlib.pyplot as plt
-from rfsource import SGMA
 from acquisition.onetone_2channel import Onetone_Frequency
+from instruments.rfsource import SGMA
 
 rm = visa.ResourceManager()
 inst = rm.open_resource(config.awg_ip)

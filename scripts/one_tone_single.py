@@ -1,10 +1,11 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import visa
+
 import acquisition.onetone_2channel as con
 import config
-import visa
-import matplotlib.pyplot as plt
-from rfsource import SGMA
 from acquisition.onetone_2channel import Onetone_Frequency
-import numpy as np
+from instruments.rfsource import SGMA
 
 #Not connected to the database, just for test purposes
 DIRECTORY = "."
