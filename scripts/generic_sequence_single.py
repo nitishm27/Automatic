@@ -5,7 +5,7 @@ import acquisition.sequence_2channel as sq
 import numpy as np
 
 DIRECTORY="."
-ID = 7
+ID = 4
 
 rm = visa.ResourceManager()
 inst = rm.open_resource(config.awg2_ip)

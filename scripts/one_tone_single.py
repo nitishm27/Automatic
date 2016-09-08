@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import visa
 
-import acquisition.onetone_2channel as con
+import acquisition.onetone as con
 import config
-from acquisition.onetone_2channel import Onetone_Frequency
+from acquisition.onetone import Onetone_Frequency
 from instruments.rfsource import SGMA
 
 #Not connected to the database, just for test purposes
@@ -16,8 +16,8 @@ STOP_FREQ = 11e9
 STEPS = 50
 
 rm = visa.ResourceManager()
-inst = rm.open_resource(config.awg_ip)
-one_tone = con.Onetone_2channel(inst)
+inst = rm.open_resource(config.awg2_ip)
+one_tone = con.Onetone(inst)
 one_tone.load_from_db(PULSE_ID)
 one_tone.npt.buffers_per_acquisition = 1000
 rf_sgma_inst = rm.open_resource(config.rfsource_ip)
