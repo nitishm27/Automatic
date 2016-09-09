@@ -1,6 +1,7 @@
 class SGMA:
     def __init__(self, inst):
         self.inst = inst
+        self.set_ext_clock(True)
 
     def enable(self, bool):
         if bool:
@@ -40,6 +41,7 @@ class SGMA:
 class SMB:
     def __init__(self, inst):
         self.inst = inst
+        self.set_ext_clock(True)
 
     def enable(self, bool):
         if bool:

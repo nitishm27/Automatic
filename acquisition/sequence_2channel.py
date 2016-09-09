@@ -1,12 +1,10 @@
 import dbm.db
 import numpy as np
-
 import acquisition.util
 import ats.atsapi as atsapi
 import pulse.pulse
 from ats.ATS9870_NPT import NPT
 from instruments import awg
-
 
 class Sequence_2Channel:
     def __init__(self, awg_inst):

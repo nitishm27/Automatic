@@ -13,7 +13,7 @@ NAME = "test"
 PULSE_ID = 1
 START_FREQ = 10.5e9
 STOP_FREQ = 11e9
-STEPS = 50
+STEPS = 10
 
 rm = visa.ResourceManager()
 inst = rm.open_resource(config.awg_ip)

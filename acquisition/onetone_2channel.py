@@ -38,12 +38,24 @@ class Onetone_Power:
         self.one_tone_freq.start()
 
     def acquire(self, verbose=False):
-        powers = np.linspace(self.power_start, self.power_stop, self.power_steps)
-        for power in powers:
+        powers = np.zeros(self.power_steps*self.freq_steps)
+        frequencies = np.zeros(len(powers))
+        magnitudes = np.zeros(len(powers))
+        phases = np.zeros(len(powers))
+
+        powers_list = np.linspace(self.power_start, self.power_stop, self.power_steps)
+        for i, power in enumerate(powers_list):
             self.rf_source.set_power(power)
             if verbose:
                 print("p=" + str(self.rf_source.get_power()))
+            freq_slice, mag_slice, phase_slice = \
+                self.one_tone_freq.acquire(self.freq_start, self.freq_stop, self.freq_steps, verbose=verbose)
+            powers[i*self.freq_steps:(i+1)*self.freq_steps] = power
+            frequencies[i * self.freq_steps:(i + 1) * self.freq_steps] = freq_slice
+            magnitudes[i*self.freq_steps:(i+1)*self.freq_steps] = mag_slice
+            phases[i*self.freq_steps:(i+1)*self.freq_steps] = phase_slice
 
+        return powers, frequencies, magnitudes, phases
 
 class Onetone_Frequency:
     def __init__(self, awg_inst, lo_source, rf_source, one_tone):
