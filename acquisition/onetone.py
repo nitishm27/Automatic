@@ -11,7 +11,7 @@ from instruments import awg
 
 class Onetone_Power:
     def __init__(self, awg_inst, lo_source, rf_source):
-        self.one_tone = Onetone_2channel()
+        self.one_tone = Onetone()
         self.awg_inst = awg_inst
         self.lo_source = lo_source
         self.rf_source = rf_source
@@ -84,14 +84,14 @@ class Onetone_Frequency:
             if verbose:
                 print("f=" + str(self.rf_source.get_freq()))
             mag, phase = self.one_tone.acquire()
-            mags[i] = mag
-            phases[i] = phase
+            mags[i] = np.mean(mag)
+            phases[i] = np.mean(phase)
 
         self.rf_source.enable(False)
         self.lo_source.enable(False)
         return freqs, mags, np.unwrap(phases)
 
-class Onetone_2channel:
+class Onetone:
     def __init__(self, awg_inst):
         self.awg_inst = awg_inst
         self.npt = NPT(atsapi.Board(systemId=1, boardId=1))
@@ -115,4 +115,4 @@ class Onetone_2channel:
         awg.set_mode(awg.Runmode.continuous, self.awg_inst)
         ch1, ch2 = acquisition.util.average_buffers(self.awg_inst, self.npt)
         mag, phase = acquisition.util.iq_demod_subtract(ch1, ch2, self.npt, self.if_freq)
-        return np.mean(mag), np.mean(phase)
+        return mag, phase
