@@ -1,37 +1,41 @@
 import matplotlib.pyplot as plt
 import visa
-
-import acquisition.onetone as con
+import acquisition.continuous
+import acquisition.continuous as con
 import config
-from acquisition.onetone import Onetone_Frequency
+from acquisition.continuous import Onetone_Frequency
 from instruments.rfsource import SGMA
+from instruments.rfsource import SMB
+from ats.ATS9870_NPT import NPT
+import ats.atsapi as atsapi
+import numpy as np
+import acquisition.util as util
+
+# npt = NPT(atsapi.Board(systemId=1, boardId=1))
+# npt.buffers_per_acquisition = 100000
+# npt.records_per_buffer = 10
+#
+# avgd_buffer = np.zeros(npt.records_per_buffer * npt.post_trigger_samples * 2)
+#
+# def avg1(avg_buf, buf):
+#     avg_buf += buf
+#
+# def proc(buf):
+#     avg1(avgd_buffer, buf)
+#
+# npt.configure_board()
+# npt.acquire_data(proc, verbose=True)
+# cha = avgd_buffer[0:int(len(avgd_buffer)/2)] / npt.buffers_per_acquisition
+# chb = avgd_buffer[int(len(avgd_buffer)/2):len(avgd_buffer)] / npt.buffers_per_acquisition
+# mag,phase = util.iq_demod_subtract(cha, chb, npt, 50e6)
+#
+# plt.plot(phase)
+# plt.plot(mag)
+# plt.show()
 
 rm = visa.ResourceManager()
-inst = rm.open_resource(config.awg_ip)
-one_tone = con.Onetone(inst)
-one_tone.load_from_db(1)
-one_tone.npt.buffers_per_acquisition = 1000
-rf_sgma_inst = rm.open_resource(config.rfsource_ip)
-lo_sgma_inst = rm.open_resource(config.rfsource2_ip)
-rf_sgma = SGMA(rf_sgma_inst)
-lo_sgma = SGMA(lo_sgma_inst)
-onetone_freq = Onetone_Frequency(inst, lo_sgma, rf_sgma, one_tone)
-onetone_freq.start()
-start_freq = 10e9
-end_freq = 11.8e9
-steps = 180
-freqs, mag, phase = onetone_freq.acquire(start_freq, end_freq, steps, verbose=True)
-plt.plot(freqs, phase)
-plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
+inst = rm.open_resource(config.awg2_ip)
+ot = acquisition.continuous.Continuous(inst)
+ot.load_from_db(1)
+ot.start()
+ot.acquire()

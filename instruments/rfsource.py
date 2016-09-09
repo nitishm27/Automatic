@@ -76,3 +76,50 @@ class SMB:
 
     def reset(self):
         self.inst.write('*RST; *CLS')
+
+class SMW:
+    def __init__(self, inst):
+        self.inst = inst
+        self.set_ext_clock(True)
+
+    #enables
+    def enable(self, bool):
+        if bool:
+            self.inst.write('OUTP:ALL ON')
+        else:
+            self.inst.write('OUTP:ALL OFF')
+
+    #sets iq
+    def set_iq(self, bool):
+        if bool:
+            self.inst.write('IQ:STAT ON')
+        else:
+            self.inst.write('IQ:STAT OFF')
+
+    #sets ext clock to 10 mhz
+    def set_ext_clock(self, bool):
+        if bool:
+            self.inst.write('ROSC:EXT:FREQ 10MHZ')
+            self.inst.write('ROSC:OUTP:FREQ:MODE DER10M')
+            self.inst.write('ROSC:SOUR EXT')
+        else:
+            self.inst.write('ROSC:SOUR INT')
+
+    #sets freq
+    def set_freq(self, freq): #input frequency in GHz
+        self.inst.write('FREQuency 5 GHz ' + str(freq) + ' GHz')
+
+    #gets freq
+    def get_freq(self):
+        return self.inst.query(':SOURce:FREQuency?')
+
+    #sets power
+    def set_power(self, power): #input power in dBm
+        self.inst.write('POW:POW ' + str(power) + 'dBm')
+
+    #gest power
+    def get_power(self):
+        return float(self.inst.query('POW:POW?'))
+
+    def reset(self):
+        self.inst.write('*RST; *CLS')

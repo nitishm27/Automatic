@@ -11,7 +11,7 @@ from instruments import awg
 
 class Onetone_Power:
     def __init__(self, awg_inst, lo_source, rf_source):
-        self.one_tone = Onetone()
+        self.one_tone = Continuous()
         self.awg_inst = awg_inst
         self.lo_source = lo_source
         self.rf_source = rf_source
@@ -57,6 +57,34 @@ class Onetone_Power:
 
         return powers, frequencies, magnitudes, phases
 
+class Twotone_Frequency:
+    def __init__(self, awg_inst, qubit_source, one_tone):
+        self.awg_inst = awg_inst
+        self.one_tone = one_tone
+        self.qubit_source = qubit_source
+
+    def start(self):
+        self.one_tone.start()
+
+    def acquire(self, start_freq, end_freq, freq_steps, verbose=False):
+        self.qubit_source.set_iq(True)
+        self.qubit_source.set_ext_clock(True)
+        self.qubit_source.enable(True)
+
+        freqs = np.linspace(start_freq, end_freq, freq_steps)
+        mags = np.zeros(len(freqs))
+        phases = np.zeros(len(freqs))
+        for i,freq in enumerate(freqs):
+            self.qubit_source.set_freq(freq/1e9)
+            if verbose:
+                print("f=" + str(self.rf_source.get_freq()))
+            mag, phase = self.one_tone.acquire()
+            mags[i] = np.mean(mag)
+            phases[i] = np.mean(phase)
+
+        self.qubit_source.enable(False)
+        return freqs, mags, np.unwrap(phases)
+
 class Onetone_Frequency:
     def __init__(self, awg_inst, lo_source, rf_source, one_tone):
         self.awg_inst = awg_inst
@@ -91,7 +119,7 @@ class Onetone_Frequency:
         self.lo_source.enable(False)
         return freqs, mags, np.unwrap(phases)
 
-class Onetone:
+class Continuous:
     def __init__(self, awg_inst):
         self.awg_inst = awg_inst
         self.npt = NPT(atsapi.Board(systemId=1, boardId=1))

@@ -53,11 +53,10 @@ def iq_demod(data, npt, if_freq):
         for j in range(0, iq_per_record):
             start = i * npt.post_trigger_samples + j * period_length
             end = i * npt.post_trigger_samples + (j+1) * period_length
-            avg_i = avg_i + np.sum(sine_samples * data[start:end]) * dt * if_freq
-            avg_q = avg_q + np.sum(cosine_samples * data[start:end]) * dt * if_freq
+            avg_i = avg_i + np.sum(cosine_samples * data[start:end]) * dt * if_freq
+            avg_q = avg_q + np.sum(sine_samples * data[start:end]) * dt * if_freq
         avg_i = avg_i / iq_per_record
         avg_q = avg_q / iq_per_record
         i_values[i] = avg_i
         q_values[i] = avg_q
-
     return i_values, q_values

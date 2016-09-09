@@ -16,7 +16,7 @@ class NPT:
     # TODO: Select the number of samples per record.
     post_trigger_samples = 2048
     # TODO: Select the number of records per DMA buffer.
-    records_per_buffer = 10
+    records_per_buffer = 100
     # TODO: Select the number of buffers per acquisition.
     buffers_per_acquisition = 100
 
