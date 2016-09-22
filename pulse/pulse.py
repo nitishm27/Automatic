@@ -228,13 +228,17 @@ class T2_Sequence:
         self.t_inc = parse("t_inc")
 
     def load_sequence(self):
-        qubit, qubit_empty = pulse.functions.gen_gaussian(self.qubit_width)
+
+        qubit = pulse.functions.gen_gaussian(self.qubit_width)[0]
         cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
         t_inc_wait = pulse.functions.gen_space(self.t_inc)
         end_wait = pulse.functions.gen_space(self.samples - self.cavity_width - \
                                              2 * len(qubit) - (self.num_pulses + 1) * self.t_inc)
-        awg.add_waveform(qubit, "qubit", self.inst)
-        awg.add_waveform(qubit_empty, "qubit_empty", self.inst)
+        qubit_double_len = 2 * len(qubit) + self.num_pulses * self.t_inc
+        qubit_double_empty = np.zeros(qubit_double_len)
+        awg.add_waveform(qubit_double_empty, "qubit_empty", self.inst)
+        # awg.add_waveform(qubit, "qubit", self.inst)
+        # awg.add_waveform(qubit_empty, "qubit_empty", self.inst)
         awg.add_waveform(cavity, "cavity", self.inst, marker1=marker)
         awg.add_waveform(cavity_empty, "cavity_empty", self.inst)
         awg.add_waveform(t_inc_wait, "t_inc_wait", self.inst)
@@ -243,20 +247,28 @@ class T2_Sequence:
 
         index = 1
         for i in range(self.num_pulses):
-            awg.add_to_sequence(1, "t_inc_wait", index, self.inst)
-            awg.add_to_sequence(2, "t_inc_wait", index, self.inst)
-            awg.set_repeat(index, self.num_pulses - i, self.inst)
-            index = index + 1
-            awg.add_to_sequence(1, "qubit", index, self.inst)
+            qubit_double_pulse = np.zeros(qubit_double_len)
+            qubit_double_pulse[-1 * len(qubit):len(qubit_double_pulse)] = qubit
+            qubit_double_pulse[-1 *(2*len(qubit) + i * self.t_inc):-1 *(len(qubit) + i * self.t_inc)] = qubit
+            name = "qubit_" + str(i)
+            awg.add_waveform(qubit_double_pulse, name, self.inst)
+            awg.add_to_sequence(1, name, index, self.inst)
             awg.add_to_sequence(2, "qubit_empty", index, self.inst)
             index = index + 1
-            awg.add_to_sequence(1, "t_inc_wait", index, self.inst)
-            awg.add_to_sequence(2, "t_inc_wait", index, self.inst)
-            awg.set_repeat(index, i + 1, self.inst)
-            index = index + 1
-            awg.add_to_sequence(1, "qubit", index, self.inst)
-            awg.add_to_sequence(2, "qubit_empty", index, self.inst)
-            index = index + 1
+            # awg.add_to_sequence(1, "t_inc_wait", index, self.inst)
+            # awg.add_to_sequence(2, "t_inc_wait", index, self.inst)
+            # awg.set_repeat(index, self.num_pulses - i, self.inst)
+            # index = index + 1
+            # awg.add_to_sequence(1, "qubit", index, self.inst)
+            # awg.add_to_sequence(2, "qubit_empty", index, self.inst)
+            # index = index + 1
+            # awg.add_to_sequence(1, "t_inc_wait", index, self.inst)
+            # awg.add_to_sequence(2, "t_inc_wait", index, self.inst)
+            # awg.set_repeat(index, i + 1, self.inst)
+            # index = index + 1
+            # awg.add_to_sequence(1, "qubit", index, self.inst)
+            # awg.add_to_sequence(2, "qubit_empty", index, self.inst)
+            # index = index + 1
             awg.add_to_sequence(1, "cavity_empty", index, self.inst)
             awg.add_to_sequence(2, "cavity", index, self.inst)
             index = index + 1
