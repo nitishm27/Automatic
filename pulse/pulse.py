@@ -233,7 +233,7 @@ class T2_Sequence:
         cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
         t_inc_wait = pulse.functions.gen_space(self.t_inc)
         end_wait = pulse.functions.gen_space(self.samples - self.cavity_width - \
-                                             2 * len(qubit) - (self.num_pulses + 1) * self.t_inc)
+                                             2 * len(qubit) - self.num_pulses * self.t_inc)
         qubit_double_len = 2 * len(qubit) + self.num_pulses * self.t_inc
         qubit_double_empty = np.zeros(qubit_double_len)
         awg.add_waveform(qubit_double_empty, "qubit_empty", self.inst)

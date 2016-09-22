@@ -4,7 +4,7 @@ import visa
 
 rm = visa.ResourceManager()
 awg = rm.open_resource(config.awg_ip)
-t2 = pulse.pulse.T1_Sequence(awg)
+t2 = pulse.pulse.T2_Sequence(awg)
 t2.qubit_width = 100
 t2.t_inc = 100
 t2.num_pulses = 50
