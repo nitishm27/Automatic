@@ -58,13 +58,13 @@ class Onetone_Power:
         return powers, frequencies, magnitudes, phases
 
 class Twotone_Frequency:
-    def __init__(self, awg_inst, qubit_source, one_tone):
+    def __init__(self, awg_inst, qubit_source, two_tone):
         self.awg_inst = awg_inst
-        self.one_tone = one_tone
+        self.two_tone = two_tone
         self.qubit_source = qubit_source
 
     def start(self):
-        self.one_tone.start()
+        self.two_tone.start()
 
     def acquire(self, start_freq, end_freq, freq_steps, verbose=False):
         self.qubit_source.set_iq(True)
@@ -77,8 +77,8 @@ class Twotone_Frequency:
         for i,freq in enumerate(freqs):
             self.qubit_source.set_freq(freq/1e9)
             if verbose:
-                print("f=" + str(self.rf_source.get_freq()))
-            mag, phase = self.one_tone.acquire()
+                print("f=" + str(self.qubit_source.get_freq()))
+            mag, phase = self.two_tone.acquire()
             mags[i] = np.mean(mag)
             phases[i] = np.mean(phase)
 

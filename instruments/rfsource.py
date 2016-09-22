@@ -53,7 +53,7 @@ class SMB:
         if bool:
             self.inst.write('SOUR:MOD:ALL:STAT ON')
         else:
-            self.inst.write('SOUR:MOD:ALL:STAT ON')
+            self.inst.write('SOUR:MOD:ALL:STAT OFF')
 
     def set_ext_clock(self, bool):
         if bool:
@@ -107,7 +107,7 @@ class SMW:
 
     #sets freq
     def set_freq(self, freq): #input frequency in GHz
-        self.inst.write('FREQuency 5 GHz ' + str(freq) + ' GHz')
+        self.inst.write(':SOURce:FREQuency ' + str(freq) + ' GHz')
 
     #gets freq
     def get_freq(self):
@@ -117,7 +117,7 @@ class SMW:
     def set_power(self, power): #input power in dBm
         self.inst.write('POW:POW ' + str(power) + 'dBm')
 
-    #gest power
+    #get power
     def get_power(self):
         return float(self.inst.query('POW:POW?'))
 

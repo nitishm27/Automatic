@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import visa
 import acquisition.continuous
+import acquisition.sequence
 import acquisition.continuous as con
 import config
 from acquisition.continuous import Onetone_Frequency
@@ -33,9 +34,11 @@ import acquisition.util as util
 # plt.plot(mag)
 # plt.show()
 
-rm = visa.ResourceManager()
-inst = rm.open_resource(config.awg2_ip)
-ot = acquisition.continuous.Continuous(inst)
-ot.load_from_db(1)
-ot.start()
-ot.acquire()
+# rm = visa.ResourceManager()
+# inst = rm.open_resource(config.awg2_ip)
+# ot = acquisition.sequence.Sequence_2Channel(inst)
+# ot.load_from_db(13)
+# ot.start()
+# time, mag, phase = ot.acquire()
+# plt.plot(time,phase)
+# plt.show()

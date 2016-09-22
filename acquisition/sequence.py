@@ -17,6 +17,7 @@ class Sequence_2Channel:
         cursor = cnx.cursor()
         dict = dbm.db.get_row(cursor, "generic_sequence", str(id))
         self.type = dict["pulse_type"]
+        print(self.type)
         if self.type == "t1_pulse":
             self.pulse = pulse.pulse.T1_Sequence(self.awg_inst)
         elif self.type == "rabi_pulse":
@@ -28,6 +29,7 @@ class Sequence_2Channel:
         self.if_freq = float(dict["if_frequency"])
 
     def start(self):
+        print('here')
         self.pulse.load_sequence()
 
     def acquire(self):

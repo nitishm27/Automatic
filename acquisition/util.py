@@ -7,8 +7,10 @@ from instruments import awg
 
 
 def average_buffers(awg_inst, npt):
+    #predefine an array for the averaged buffer
     avgd_buffer = np.zeros(npt.post_trigger_samples * npt.records_per_buffer * 2)
 
+    #summing buffers
     def test_proc(avgd, buffer):
         avgd += buffer
 
@@ -17,16 +19,23 @@ def average_buffers(awg_inst, npt):
 
     def run_acquisition():
         npt.acquire_data(avg)
+        #npt acquire: pass the buffer
+        #avg takes the buffer
+        #avgd adds the new buffer to avg_d buffer
 
+    #Taking data and adding all the buffers at the same time.
     thread = threading.Thread(target=run_acquisition, args=())
     thread.start()
+    #Going to start awg within the measurement
     time.sleep(.1)
     awg.set_ref_clock(True, awg_inst)
     awg.set_ref_freq(10, awg_inst)
     awg.start(awg_inst)
     thread.join()
     awg.stop(awg_inst)
-    ch1 = avgd_buffer[0:int(len(avgd_buffer)/2)] / npt.buffers_per_acquisition
+
+    #For dual channel, the first section of buffer records data from ch1, and the second records data from ch2
+    ch1 = avgd_buffer[0:int(len(avgd_buffer)/2)] / npt.buffers_per_acquisition #avg buffer from ch1
     ch2 = avgd_buffer[int(len(avgd_buffer)/2):len(avgd_buffer)] / npt.buffers_per_acquisition
     return ch1, ch2
 

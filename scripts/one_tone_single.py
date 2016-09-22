@@ -11,9 +11,9 @@ from instruments.rfsource import SGMA
 DIRECTORY = "C:\\Users\\nguyen89\Desktop"
 NAME = "test"
 MEASUREMENT_ID = 2
-START_FREQ = 10.29e9
-STOP_FREQ = 10.31e9
-STEPS = 50
+START_FREQ = 10e9
+STOP_FREQ = 11e9
+STEPS = 100
 
 rm = visa.ResourceManager()
 inst = rm.open_resource(config.awg2_ip)
