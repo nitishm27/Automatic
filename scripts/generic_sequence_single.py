@@ -10,7 +10,7 @@ from instruments.rfsource import SMW
 
 #PARAMETERS GO HERE
 directory= "D:\\Data\\Fluxonium #10_python code by Jon"
-id = 44
+id = 53
 rm = visa.ResourceManager()
 cavity_source = SMB(rm.open_resource(config.smb_ip))
 lo_source = SMB(rm.open_resource(config.smb2_ip))
@@ -19,14 +19,14 @@ qubit_source = SMW(rm.open_resource(config.smw_ip))
 cnx = dbm.db.open_readonly_connection()
 cursor = cnx.cursor()
 dict = dbm.db.get_row(cursor, "generic_sequence", str(id))
-# cavity_source.set_freq(float(dict["cavity_frequency"]) / 1e9)
-# cavity_source.set_power(float(dict["cavity_power"]))
-# cavity_source.set_iq(True)
-# cavity_source.enable(True)
-# lo_source.set_freq((float(dict["cavity_frequency"]) + float(dict["if_frequency"])) / 1e9)
-# lo_source.set_power(16)
-# lo_source.set_iq(False)
-# lo_source.enable(True)
+cavity_source.set_freq(float(dict["cavity_frequency"]) / 1e9)
+cavity_source.set_power(float(dict["cavity_power"]))
+cavity_source.set_iq(True)
+cavity_source.enable(True)
+lo_source.set_freq((float(dict["cavity_frequency"]) + float(dict["if_frequency"])) / 1e9)
+lo_source.set_power(16)
+lo_source.set_iq(False)
+lo_source.enable(True)
 qubit_source.set_freq(float(dict["qubit_frequency"]) / 1e9)
 qubit_source.set_power(float(dict["qubit_power"]))
 qubit_source.set_iq(True)
