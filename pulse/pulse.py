@@ -28,7 +28,7 @@ class Continuous:
         self.clock = float(dict["clock"])
 
         def parse(value):
-            return int(float(dict[value]) / self.clock)
+            return int(np.round(float(dict[value]) / self.clock))
 
         self.samples = int(dict["samples"])
         self.qubit_peak = parse("qubit_pulse_peak")
@@ -70,7 +70,7 @@ class Rabi_Sequence:
         self.clock = float(dict["clock"])
 
         def parse(value):
-            return int(float(dict[value]) / self.clock)
+            return int(np.round(float(dict[value]) / self.clock))
 
         self.samples = int(dict["samples"])
         self.num_pulses = int(dict["num_pulses"])
@@ -132,7 +132,7 @@ class T1_Sequence:
 
         self.clock = float(dict["clock"])
         def parse(value):
-            return int(float(dict[value])/self.clock)
+            return int(np.round(float(dict[value])/self.clock))
         self.samples = int(dict["samples"])
         self.num_pulses = int(dict["num_pulses"])
         # self.qubit_end_time = parse("qubit_end_time")
@@ -215,7 +215,7 @@ class T2_Sequence:
 
         self.clock = float(dict["clock"])
         def parse(value):
-            return int(float(dict[value])/self.clock)
+            return int(np.round(float(dict[value])/self.clock))
         self.samples = int(dict["samples"])
         self.num_pulses = int(dict["num_pulses"])
         self.qubit_width = parse("qubit_width")

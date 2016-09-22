@@ -22,6 +22,8 @@ class Sequence_2Channel:
             self.pulse = pulse.pulse.T1_Sequence(self.awg_inst)
         elif self.type == "rabi_pulse":
             self.pulse = pulse.pulse.Rabi_Sequence(self.awg_inst)
+        elif self.type == "t2_pulse":
+            self.pulse = pulse.pulse.T2_Sequence(self.awg_inst)
         self.pulse.load_from_db(dict["pulse_id"])
         self.npt.post_trigger_samples = int(dict["samples_per_record"])
         self.npt.buffers_per_acquisition = int(dict["buffers_per_acquisition"])
