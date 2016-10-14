@@ -143,19 +143,14 @@ class T1_Sequence:
         self.delay_const2 = parse("delay_const2")
         self.pulse_type = dict["qubit_pulse_type"]
         if self.pulse_type == "gaussian_edge":
-            self.qubit_edge_with = parse("qubit_edge_width")
+            self.edge_width = parse("qubit_edge_width")
         self.t_inc = parse("t_inc")
 
     def load_sequence(self):
         if self.pulse_type == "gaussian":
             qubit, qubit_empty = pulse.functions.gen_gaussian(self.qubit_width)
         elif self.pulse_type == "gaussian_edge":
-            qubit = pulse.functions.gen_space(self.qubit_width)
-            qubit_empty = pulse.functions.gen_space(self.qubit_width)
-            qubit[0:len(qubit)] = 1
-            gaussian_edges = pulse.functions.gen_gaussian(self.qubit_edge_with)[0]
-            qubit[0:int(len(gaussian_edges)/2)] = gaussian_edges[0:int(len(gaussian_edges)/2)]
-            qubit[int(-1*len(gaussian_edges)/2):len(qubit)] = gaussian_edges[int(len(gaussian_edges)/2):len(gaussian_edges)]
+            qubit, qubit_empty = pulse.functions.gen_gaussian_edge(self.edge_width, self.qubit_width)
 
         cavity, marker, cavity_empty = pulse.functions.gen_cavity(self.cavity_width, self.delay_const2, self.marker_width)
         t_inc_wait = pulse.functions.gen_space(self.t_inc)
