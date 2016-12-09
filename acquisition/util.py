@@ -27,7 +27,7 @@ def average_buffers(awg_inst, npt):
     thread = threading.Thread(target=run_acquisition, args=())
     thread.start()
     #Going to start awg within the measurement
-    time.sleep(.1)
+    time.sleep(1)
     awg.set_ref_clock(True, awg_inst)
     awg.set_ref_freq(10, awg_inst)
     awg.start(awg_inst)

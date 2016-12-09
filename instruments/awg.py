@@ -13,12 +13,14 @@ def add_waveform(waveform, name, inst, marker1=None, marker2=None):
     inst.write("WLISt:WAVeform:NEW " + repr(name) + "," + str(len(waveform)) + ",REAL")
     inst.values_format.use_binary('f', False, np.array)
     bytes = [None] * len(waveform)
+    marker1_true = np.any(marker1)
+    marker2_true = np.any(marker2)
     for i, f in enumerate(waveform):
         marker_byte = 0
-        if np.any(marker1) and marker1[i] != 0:
-            marker_byte = marker_byte + 64
-        if np.any(marker2) and marker2[i] != 0:
-            marker_byte = marker_byte + 128
+        if marker1_true and marker1[i] != 0:
+            marker_byte += 64
+        if marker2_true and marker2[i] != 0:
+            marker_byte += 128
         marker_str = chr(marker_byte).encode()
         bytes[i] = float_to_bitstring(f) + marker_str
     byte_str = b''.join([byte for byte in bytes])

@@ -7,8 +7,8 @@ def gen_gaussian (width):
     return gaussian_arr, empty_arr
 
 def gen_gaussian_edge (edge_width, pulse_width):
-    empty_arr = np.zeros(pulse_width)
-    pulse = np.ones(pulse_width)
+    empty_arr = np.zeros(4*edge_width + pulse_width)
+    pulse = np.ones(len(empty_arr))
     x = np.arange(4*edge_width)
     gaussian_arr = np.power(2, -1 * np.power(2*(x - 2*edge_width)/edge_width, 2))
     pulse[-1*(2*edge_width)::] = gaussian_arr[-1*(2*edge_width)::]

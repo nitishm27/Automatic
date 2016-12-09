@@ -17,13 +17,14 @@ class Sequence_2Channel:
         cursor = cnx.cursor()
         dict = dbm.db.get_row(cursor, "generic_sequence", str(id))
         self.type = dict["pulse_type"]
-        print(self.type)
         if self.type == "t1_pulse":
             self.pulse = pulse.pulse.T1_Sequence(self.awg_inst)
         elif self.type == "rabi_pulse":
             self.pulse = pulse.pulse.Rabi_Sequence(self.awg_inst)
         elif self.type == "t2_pulse":
             self.pulse = pulse.pulse.T2_Sequence(self.awg_inst)
+        elif self.type == "t2_echo_pulse":
+            self.pulse = pulse.pulse.T2_echo_Sequence(self.awg_inst)
         self.pulse.load_from_db(dict["pulse_id"])
         self.npt.post_trigger_samples = int(dict["samples_per_record"])
         self.npt.buffers_per_acquisition = int(dict["buffers_per_acquisition"])
@@ -31,7 +32,6 @@ class Sequence_2Channel:
         self.if_freq = float(dict["if_frequency"])
 
     def start(self):
-        print('here')
         self.pulse.load_sequence()
 
     def acquire(self):
