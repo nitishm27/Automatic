@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import acquisition.sequence as sq
 import numpy as np
 import dbm.db
+from time import sleep
 import csv
 from instruments.rfsource import SMB
 from instruments.rfsource import SMW
@@ -11,7 +12,7 @@ from time import gmtime, strftime
 
 #PARAMETERS GO HERE
 directory= "D:\\Data\\Fluxonium #10_python code by Jon"
-id = 930
+id = 944
 rm = visa.ResourceManager()
 cavity_source = SMB(rm.open_resource(config.smb_ip))
 lo_source = SMB(rm.open_resource(config.smb2_ip))
@@ -36,31 +37,19 @@ qubit_source.enable(True)
 inst = rm.open_resource(config.awg2_ip)
 sequence = sq.Sequence_2Channel(inst)
 sequence.load_from_db(id)
-
-for i in range(1, 20):
+i = 1
+# for i in range(1, 20):
+while True:
     print (i)
-    # print (strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+    print (strftime("%Y-%m-%d %H:%M:%S", gmtime()))
     sequence.start()
     time, mag, phase = sequence.acquire()
-
     # plt.plot(time,phase*180/np.pi)
     name = "\\" + dict["pulse_type"] + "_" + dict["qubit_frequency"] + "_" + str(id)
     np.savetxt(directory + name + "_time" + str(i) + ".csv", time)
     np.savetxt(directory + name + "_mag" + str(i) + ".csv", mag)
     np.savetxt(directory + name + "_phase" + str(i) + ".csv", phase)
-
-#inf loop
-# i=0
-# while True:
-#     print (i)
-#     sequence.start()
-#     time, mag, phase = sequence.acquire()
-#
-#     name = "\\" + dict["pulse_type"] + "_" + dict["qubit_frequency"] + "_" + str(id)
-#     np.savetxt(directory + name + "_time" + str(i) + ".csv", time)
-#     np.savetxt(directory + name + "_mag" + str(i) + ".csv", mag)
-#     np.savetxt(directory + name + "_phase" + str(i) + ".csv", phase)
-#
-#     plt.plot(time, phase)
+    i = i + 1
+    # sleep(10)
 
 plt.show()

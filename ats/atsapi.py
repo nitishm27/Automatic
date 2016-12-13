@@ -456,7 +456,7 @@ class DMABuffer:
         self.ctypes_buffer = ctypes_array
         pointer, read_only_flag = self.buffer.__array_interface__['data']
 
-    def __exit__(self):
+    def free(self):
         if os.name == 'nt':
             MEM_RELEASE = 0x8000
             windll.kernel32.VirtualFree.argtypes = [c_void_p, c_long, c_long]
@@ -466,6 +466,9 @@ class DMABuffer:
             libc.free(self.addr)
         else:
             raise Exception("Unsupported OS")
+
+    def __exit__(self):
+        self.free()
 
 
 # Load libraries

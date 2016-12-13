@@ -202,6 +202,8 @@ class NPT:
                 self.board.postAsyncBuffer(buffer.addr, buffer.size_bytes)
         finally:
             self.board.abortAsyncRead()
+            for buffer in buffers:
+                buffer.free()
         # Compute the total transfer time, and display performance information.
         transferTime_sec = time.clock() - start
         if (verbose):

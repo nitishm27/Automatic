@@ -10,7 +10,7 @@ from instruments.rfsource import SMW
 from time import gmtime, strftime
 #PARAMETERS GO HERE
 directory= "D:\\Data\\Fluxonium #10_python code by Jon"
-id = 930
+id = 944
 rm = visa.ResourceManager()
 cavity_source = SMB(rm.open_resource(config.smb_ip))
 lo_source = SMB(rm.open_resource(config.smb2_ip))
