@@ -1,31 +1,18 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import pyvisa as visa
+import config
 import time
+from instruments.hpsynth import HPSynth
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-
-# some X and Y data
-x = np.arange(10000)
-y = np.random.randn(10000)
-
-li, = ax.plot(x, y)
-
-# draw and show it
-fig.canvas.draw()
-plt.show(block=False)
-
-# loop to update the data
-while True:
-    try:
-        y[:-10] = y[10:]
-        y[-10:] = np.random.randn(10)
-
-        # set the new data
-        li.set_ydata(y)
-
-        fig.canvas.draw()
-
-        time.sleep(0.01)
-    except KeyboardInterrupt:
-        break
+rm = visa.ResourceManager()
+res = rm.open_resource(config.hpsynth_gpib)
+# res.write_raw(b'x07')
+# visa_library = visa.highlevel.VisaLibrary()
+# res.write('RL2')
+res.control_ren(0)
+# res.control_atn(0)
+res.write('K1L7')
+# hpsynth = HPSynth(res)
+# # hpsynth.set_ext_clock(True)
+# # hpsynth.enable(True)
+# hpsynth.set_power(10)
+# hpsynth.enable(True)
