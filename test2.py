@@ -4,7 +4,7 @@ import time
 from instruments.hpsynth import HPSynth
 
 rm = visa.ResourceManager()
-res = rm.open_resource(config.hpsynth_gpib)
+res = rm.open_resource(config.hpsynth2_gpib)
 # res.write_raw(b'x07')
 # visa_library = visa.highlevel.VisaLibrary()
 # res.write('RL2')
