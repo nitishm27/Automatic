@@ -1,3 +1,4 @@
+#NOT IMPLEMENTED
 class Yokogawa:
     def __init__ (self, inst):
         self.inst = inst
